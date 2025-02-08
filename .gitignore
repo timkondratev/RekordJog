@@ -2,3 +2,4 @@
 .DS_Store
 *.ini
 *__pycache__
+.vscode
