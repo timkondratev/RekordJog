@@ -1,4 +1,4 @@
-
+from setup_jogwheels import setup_jogwheels
 
 def main():
     # ASK: Select MIDI input device from list
