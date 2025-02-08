@@ -1,3 +1,6 @@
+import os
+import json
+
 from setup_jogwheels import setup_jogwheels
 
 def main():
@@ -38,6 +41,31 @@ def main():
     for deck in range(num_decks):
         decks_parameters.append(deck_setup(deck+1))
 
+    # Save a config file with the parameters
+    conf_list = os.listdir("configs")
+    print("Enter the name of the config file to save: ")
+    while True:
+        config_name = input()
+        # Save the config file
+        #if config_name is already used, ask to overwrite
+
+        # list config names in the folder "configs"
+        if config_name in conf_list:
+            print(f"Config file {config_name} already exists. Overwrite? [y/n]")
+            overwrite = input()
+            if overwrite.lower() != "y":
+                print("Please enter a different name: ")
+                continue
+            else:
+                print("Overwriting config file")
+                break
+    
+    # Save the config file
+    with open(f"configs/{config_name}.json", "w") as f:
+        f.write(json.dumps(decks_parameters))
+
+
+    print(f"Saved config file {config_name}")
 
 def deck_setup(deck_number):
     print(f"Setting up deck {deck_number}")
