@@ -1,34 +1,21 @@
 import os
-import mido
 import math
+import time
+import threading
+import mido
 from functions.check_config import check_config
 from functions.rekordjog_start_sequence import rekordjog_start_sequence
 
-
-# The JOG_MULTIPLIER is required for smooth jog operation.
-# Pioneer controllers seem to be sending MIDI signal at a much higher rate than XONE:4D.
-# If you send one fake Pioneer message for each Xone jog message, scratching sounds unnatural.
-# You need to test different values for other controllers.
-JOG_MULTIPLIER = 1
-
-tempo_values = [
-    [63, 63],
-    [63, 63],
-    [63, 63],
-    [63, 63],
-]
-
-
-TEMPO_BIG_CODES = {
-    (0xBF, 0x11): 0,
-    (0xBE, 0x11): 1,
-    (0xBF, 0x1F): 2,
-    (0xBE, 0x1F): 3,
-    (0xBF, 0x13): 4,
-    (0xBE, 0x13): 5,
-    (0xBF, 0x1D): 6,
-    (0xBE, 0x1D): 7,
-}
+# TEMPO_BIG_CODES = {
+#     (0xBF, 0x11): 0,
+#     (0xBE, 0x11): 1,
+#     (0xBF, 0x1F): 2,
+#     (0xBE, 0x1F): 3,
+#     (0xBF, 0x13): 4,
+#     (0xBE, 0x13): 5,
+#     (0xBF, 0x1D): 6,
+#     (0xBE, 0x1D): 7,
+# }
 
 
 class PitchRider:
@@ -47,28 +34,43 @@ class PitchRider:
     0x2000 is 8192 in decimal. That's ~ half of 16383 which is max 14 bit value.
     tempo_fader_lsb can be represented by a separate fader to achieve hi-res pitch bend.
 
+    Jog send rate to achieve 100% of playback speed = 396.
     Jog send rate to achieve 200% of playback speed = 792.
-    Messages per second (and per deck). Formula is: 720/(60/33)*2=792.
+    Messages per second (and per deck). Formula is: 720/(60/33)=396.
     DDJ FLX-4 sends 720 messages per revolution.
     33 is the speed of a turntable. 60 is seconds in one minute.
-    The result is multiplied by 2 because the maximum scratching speed with current approach is +100%, or 2x.
+    The result could be multiplied by 2 to get the maximum scratching speed of 200%.
+    This is the limitation of current approach since we are using WIDE tempo range to control playback.
     """
 
-    def __init__(self):
-
+    def __init__(self, midi_inp, midi_out):
         # SETTINGS
+
+        self.midi_inp = midi_inp
+        self.midi_out = midi_out
 
         self.should_reverse_tempo_fader = False
 
         # The following only applies to certain types of jogs.
         # The other type sends messages with a capped rate and increased magnitude (data byte)
-        self.jog_messages_per_revolution = 128
+        self.jog_messages_per_revolution = 120
 
+        # # Approximate value. TKFX tends to skip a lot of steps when turned fast.
+        # self.jog_magnitude_coefficient = (
+        #     # 720 is the default number of MIDI messages that DDJ FLX-4 sends per revolutin.
+        #     720 / self.jog_messages_per_revolution #
+        # )
 
+        # self.delta_time = 1.0 / self.tempo_refresh_rate
+        self.delta_time = 0.1
+
+        # Applied when a track is playing so that the maximum tempo increase from nudging never exceeds +10%.
+        self.nudge_coefficient = 0.1
 
         # RESOURCES
 
-        self.tempo_range_options = [  # For ranges 6%, 10%, 16%, and WIDE (100%) the values are 0.06, 0.1, 0.16, and 1.0 accordingly.
+        self.tempo_range_options = [
+            # For ranges 6%, 10%, 16%, and WIDE (100%) the values are 0.06, 0.1, 0.16, and 1.0 accordingly.
             0.06,
             0.1,
             0.16,
@@ -99,28 +101,35 @@ class PitchRider:
             (0x8E, 0x46): 3,  # Deck 4.
         }
 
+        # TODO Tempo codes
+
         # INTERNAL STATE
 
-        self.tempo = [  # Tempo is represented as float for convenience.
+        self.tempo = [
+            # Tempo is represented as float for convenience.
             1.0,
             1.0,
             1.0,
             1.0,
         ]
-        self.tempo_range = [  # Tempo range that the user controls. For each deck.
+        self.tempo_range = [
+            # Tempo range that the user controls. For each deck.
             self.tempo_range_options[1],
             self.tempo_range_options[1],
             self.tempo_range_options[1],
             self.tempo_range_options[1],
         ]
 
-        self.pitch_amount = [  # 0.0 for the neutral, -1.0 for the slowest, 1.0 for the fastest tempo.
+        self.pitch_amount = [
+            # 0.0 for the neutral, -1.0 for the slowest, 1.0 for the fastest tempo.
             0.0,
             0.0,
             0.0,
             0.0,
         ]
-        self.nudge_amount = [  # Increases or decreases when the jog is rotating. Goes back to 0 when the rotation stops.
+        self.nudge_amount = [
+            # Increases or decreases when the jog is rotating. Goes back to 0 when the rotation stops.
+            # 0.0 for the neutral, -1.0 for the fasted CCW rotation, 1.0 for the fastest CW rotation.
             0.0,
             0.0,
             0.0,
@@ -132,6 +141,40 @@ class PitchRider:
             False,
             False,
         ]
+
+        self.nudge_msg_accumulator = [
+            # Add up nudge values for each jog. Reset to 0 every tick.
+            0,
+            0,
+            0,
+            0,
+        ]
+
+        self.nudge_msg_accumulator_lock = [
+            # Ensures only one thread writes to self.nudge_msg_accumulator
+            threading.Lock,
+            threading.Lock,
+            threading.Lock,
+            threading.Lock,
+        ]
+
+    def midi_input_thread(self):
+        while True:
+            ims = self.midi_inp.receive()
+            ims_2b = tuple(ims.bytes()[:2])
+
+            if ims_2b in self.jog_turn_codes:
+                self.jog(ims)
+
+            elif ims_2b in self.jog_touch_on_codes:
+                deck_id = self.jog_touch_on_codes[ims_2b]
+                self.jog_touch[deck_id] = True
+
+            elif ims_2b in self.jog_touch_off_codes:
+                deck_id = self.jog_touch_off_codes[ims_2b]
+                self.jog_touch[deck_id] = False
+
+            # TODO elif tempo codes...
 
     def select_next_tempo_range(self, deck_id):
         """
@@ -150,7 +193,7 @@ class PitchRider:
 
         self.tempo[deck_id] = (
             1.0 + (self.pitch_amount[deck_id] * self.tempo_range[deck_id])
-        ) * (1.0 + self.nudge_amount[deck_id])
+        ) * (1.0 + self.nudge_amount[deck_id] * self.nudge_coefficient)
 
     def jog(self, msg):
         """
@@ -159,6 +202,9 @@ class PitchRider:
         deck_id = self.jog_turn_codes[tuple(msg.bytes()[:2])]
         v = msg.bytes()[2]  # Value from jog
 
+        with self.nudge_msg_accumulator_lock[deck_id]:
+            self.nudge_msg_accumulator[deck_id] += v
+
         self.nudge_amount[deck_id] += self.get_jog_value_delta(v)
 
     def get_jog_value_delta(self, value):
@@ -166,8 +212,6 @@ class PitchRider:
         The current implementation only works for jogs with middle value of 0x40.
         """
         return self.jog_middle_value - value
-
-
 
 
 def tempo(midi_out, deck_id):
