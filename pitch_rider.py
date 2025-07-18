@@ -54,7 +54,9 @@ class PitchRider:
         # The following only applies to certain types of jogs.
         # The other type sends messages with a capped rate and increased magnitude (data byte).
         self.jog_messages_per_revolution = 120
-        self.messages_per_second = self.jog_messages_per_revolution / (60 / 33) # = 66 in this case.
+        self.messages_per_second = self.jog_messages_per_revolution / (
+            60 / 33
+        )  # = 66 in this case.
 
         # # Approximate value. TKFX tends to skip a lot of steps when turned fast.
         # self.jog_magnitude_coefficient = (
@@ -64,10 +66,12 @@ class PitchRider:
 
         # self.delta_time = 1.0 / self.tempo_refresh_rate
         self.delta_time = 0.1
-        self.nudge_coefficient = self.delta_time * self.messages_per_second # The coefficient used in nudge_amount calculation.
+        self.nudge_coefficient = (
+            self.delta_time * self.messages_per_second
+        )  # The coefficient used in nudge_amount calculation.
 
-        # Applied when a track is playing so that the maximum tempo increase from nudging never exceeds +10%.
-        self.nudge_coefficient = 0.1
+        # Applied when nudging a track (instead of scratching) so that tempo increases 10% instead of 100%.
+        self.nudge_reducer_coefficient = 0.1
 
         # RESOURCES
 
@@ -106,6 +110,7 @@ class PitchRider:
         # TODO Tempo codes
 
         # INTERNAL STATE
+        self.running = True
 
         self.tempo = [
             # Tempo is represented as float for convenience.
@@ -154,15 +159,30 @@ class PitchRider:
 
         self.nudge_msg_accumulator_lock = [
             # Ensures only one thread writes to self.nudge_msg_accumulator
-            threading.Lock,
-            threading.Lock,
-            threading.Lock,
-            threading.Lock,
+            threading.Lock(),
+            threading.Lock(),
+            threading.Lock(),
+            threading.Lock(),
         ]
 
+    def run(self):
+        input_thread = threading.Thread(target=self.midi_input_thread)
+        tick_thread = threading.Thread(target=self.tick_thread)
+
+        input_thread.start()
+        tick_thread.start()
+
+        try:
+            while True:
+                time.sleep(1)
+        except KeyboardInterrupt:
+            print("Stopping...")
+            self.running = False
+            input_thread.join()
+            tick_thread.join()
+
     def midi_input_thread(self):
-        while True:
-            ims = self.midi_inp.receive()
+        for ims in self.midi_inp:
             ims_2b = tuple(ims.bytes()[:2])
 
             if ims_2b in self.jog_turn_codes:
@@ -176,16 +196,23 @@ class PitchRider:
                 deck_id = self.jog_touch_off_codes[ims_2b]
                 self.jog_touch[deck_id] = False
 
+            if not self.running:
+                break
+
             # TODO elif tempo codes...
-    
+
     def tick_thread(self):
         """
         Calculate self.nudge_amount for each deck
         """
-        
-        while True:
+
+        while self.running:
             for deck_id, msg_sum in enumerate(self.nudge_msg_accumulator):
-                self.nudge_amount[deck_id] = msg_sum * self.nudge_coefficient
+                self.nudge_amount[deck_id] = msg_sum / self.nudge_coefficient
+
+                print(f"Nudge acc: {self.nudge_msg_accumulator[deck_id]}")
+                print(f"Nudge amount: {self.nudge_amount[deck_id]}")
+                self.nudge_msg_accumulator[deck_id] = 0
 
             old_tempo = self.tempo.copy()
 
@@ -194,10 +221,7 @@ class PitchRider:
 
                 if not self.tempo[deck_id] == old_tempo[deck_id]:
                     self.send_tempo_msg(deck_id)
-
-
-
-
+            time.sleep(self.delta_time)
 
     def select_next_tempo_range(self, deck_id):
         """
@@ -216,26 +240,28 @@ class PitchRider:
 
         self.tempo[deck_id] = (
             1.0 + (self.pitch_amount[deck_id] * self.tempo_range[deck_id])
-        ) * (1.0 + self.nudge_amount[deck_id] * self.nudge_coefficient)
+        ) * (1.0 + self.nudge_amount[deck_id] * self.nudge_reducer_coefficient)
 
     def send_tempo_msg(self, deck_id):
         """
         Transform inner tempo float value into a midi message and send it out.
         """
 
-        tempo_norm = max(0.0, min(2.0, self.tempo[deck_id])) / 2.0 # 0.0..1.0
-        tempo_14_bit = int(tempo_norm * 16383 + 0.5)   # yields 0..16383
-        
-        msb = (tempo_14_bit >> 7) & 0x7F          # 0..127
-        lsb = tempo_14_bit        & 0x7F          # 0..127
+        print(f"Tempos: {self.tempo}\n")
+
+        tempo_norm = max(0.0, min(2.0, self.tempo[deck_id])) / 2.0  # 0.0..1.0
+        tempo_14_bit = int(tempo_norm * 16383 + 0.5)  # yields 0..16383
+
+        msb = (tempo_14_bit >> 7) & 0x7F  # 0..127
+        lsb = tempo_14_bit & 0x7F  # 0..127
+        # print(f"MSB: {msb}\n")
+        # print(f"LSB: {lsb}\n")
 
         # TODO Remove hard-coded midi message values
         msb_msg = mido.Message.from_bytes([0xB0 + deck_id, 0x00, msb])
         lsb_msg = mido.Message.from_bytes([0xB0 + deck_id, 0x20, lsb])
         self.midi_out.send(msb_msg)
         self.midi_out.send(lsb_msg)
-
-
 
     def jog(self, msg):
         """
@@ -245,9 +271,8 @@ class PitchRider:
         v = msg.bytes()[2]  # Value from jog
 
         with self.nudge_msg_accumulator_lock[deck_id]:
-            self.nudge_msg_accumulator[deck_id] += v
-
-        # self.nudge_amount[deck_id] += self.get_jog_value_delta(v)
+            self.nudge_msg_accumulator[deck_id] += self.get_jog_value_delta(v)
+            print(f"MIDI message value: {self.get_jog_value_delta(v)}")
 
     def get_jog_value_delta(self, value):
         """
@@ -274,17 +299,21 @@ def main():
             midi_out = mido.open_output("RekordJog", True)
 
         rekordjog_start_sequence()
-        while True:
-            ims = midi_inp.receive()
-            ims_2b = tuple(ims.bytes()[:2])
 
-            if ims_2b in JOG_CODES:
-                jog(midi_out, ims)
+        pitch_rider = PitchRider(midi_inp=midi_inp, midi_out=midi_out)
+        pitch_rider.run()
 
-            elif ims_2b in TEMPO_BIG_CODES:
-                deck_id = math.floor(TEMPO_BIG_CODES[ims_2b] / 2)
-                tempo_values[deck_id][0] = 127 - ims.bytes()[2]
-                tempo(midi_out, deck_id)
+        # while True:
+        #     ims = midi_inp.receive()
+        #     ims_2b = tuple(ims.bytes()[:2])
+
+        #     if ims_2b in JOG_CODES:
+        #         jog(midi_out, ims)
+
+        #     elif ims_2b in TEMPO_BIG_CODES:
+        #         deck_id = math.floor(TEMPO_BIG_CODES[ims_2b] / 2)
+        #         tempo_values[deck_id][0] = 127 - ims.bytes()[2]
+        #         tempo(midi_out, deck_id)
 
     except KeyboardInterrupt:
         print("\nClosing RekordJog, bye.")
