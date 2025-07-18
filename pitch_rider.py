@@ -53,9 +53,7 @@ class PitchRider:
         # The following only applies to certain types of jogs.
         # The other type sends messages with a capped rate and increased magnitude (data byte).
         self.jog_messages_per_revolution = 136
-        self.messages_per_second = self.jog_messages_per_revolution / (
-            60 / 33
-        )
+        self.messages_per_second = self.jog_messages_per_revolution / (60 / 33)
 
         self.delta_time = 0.1
         self.nudge_coefficient = (
@@ -75,6 +73,13 @@ class PitchRider:
             1.0,
         ]
 
+        self.deck_play_pause_codes = {
+            (0xB0, 0x07): 0,  # Deck 1.
+            (0xB0, 0x27): 1,  # Deck 2.
+            (0xB0, 0x47): 2,  # Deck 3.
+            (0xB0, 0x67): 3,  # Deck 4.
+        }
+
         # Below are the first two bytes of controller-specific MIDI messages for jog rotation (decks 1 to 4 are indexed as 0 to 3).
         # The third byte carries value that indicates speed and direction of rotation. Different controllers use different ways to encode this value.
         self.jog_turn_codes = {
@@ -84,19 +89,12 @@ class PitchRider:
             (0xB0, 0x65): 3,  # Deck 4.
         }
         self.jog_middle_value = 0x40
-        self.jog_touch_on_codes = {
+        self.jog_touch_codes = {
             # TODO Replace with actual values
-            (0x9F, 0x26): 0,  # Deck 1.
-            (0x9F, 0x46): 1,  # Deck 2.
-            (0x9E, 0x26): 2,  # Deck 3.
-            (0x9E, 0x46): 3,  # Deck 4.
-        }
-        self.jog_touch_off_codes = {
-            # TODO Replace with actual values
-            (0x8F, 0x26): 0,  # Deck 1.
-            (0x8F, 0x46): 1,  # Deck 2.
-            (0x8E, 0x26): 2,  # Deck 3.
-            (0x8E, 0x46): 3,  # Deck 4.
+            (0xB0, 0x06): 0,  # Deck 1.
+            (0xB0, 0x26): 1,  # Deck 2.
+            (0xB0, 0x46): 2,  # Deck 3.
+            (0xB0, 0x66): 3,  # Deck 4.
         }
 
         # TODO Tempo codes
@@ -135,6 +133,13 @@ class PitchRider:
             0.0,
             0.0,
             0.0,
+        ]
+
+        self.deck_playing = [
+            False,
+            False,
+            False,
+            False,
         ]
 
         self.jog_touch = [
@@ -183,13 +188,15 @@ class PitchRider:
             if ims_2b in self.jog_turn_codes:
                 self.jog(ims)
 
-            elif ims_2b in self.jog_touch_on_codes:
-                deck_id = self.jog_touch_on_codes[ims_2b]
-                self.jog_touch[deck_id] = True
+            elif ims_2b in self.jog_touch_codes:
+                deck_id = self.jog_touch_codes[ims_2b]
+                self.jog_touch[deck_id] = True if ims.bytes()[2] == 127 else False
+                print(f" Jog id {deck_id} is touched: {self.jog_touch[deck_id]}")
 
-            elif ims_2b in self.jog_touch_off_codes:
-                deck_id = self.jog_touch_off_codes[ims_2b]
-                self.jog_touch[deck_id] = False
+            elif ims_2b in self.deck_play_pause_codes:
+                deck_id = self.deck_play_pause_codes[ims_2b]
+                self.deck_playing[deck_id] = not self.deck_playing[deck_id]
+                print(f" Deck id {deck_id} is playing: {self.deck_playing[deck_id]}")
 
             if not self.running:
                 break
@@ -214,8 +221,14 @@ class PitchRider:
             for deck_id in range(4):
                 self.tempo_transformation(deck_id)
 
+                if self.nudge_amount[deck_id] < 0:
+                    # TODO
+                    self.midi_out.send()
+
+
                 if not self.tempo[deck_id] == old_tempo[deck_id]:
                     self.send_tempo_msg(deck_id)
+
             time.sleep(self.delta_time)
 
     def select_next_tempo_range(self, deck_id):
@@ -233,9 +246,12 @@ class PitchRider:
         Apply pitch first, nudge second.
         """
 
-        self.tempo[deck_id] = (
-            1.0 + (self.pitch_amount[deck_id] * self.tempo_range[deck_id])
-        ) * (1.0 + self.nudge_amount[deck_id] * self.nudge_reducer_coefficient)
+        if not self.jog_touch[deck_id]:
+            self.tempo[deck_id] = (
+                1.0 + (self.pitch_amount[deck_id] * self.tempo_range[deck_id])
+            ) * (1.0 + self.nudge_amount[deck_id] * self.nudge_reducer_coefficient)
+        else:
+            self.tempo[deck_id] = abs(self.nudge_amount[deck_id])
 
     def send_tempo_msg(self, deck_id):
         """
