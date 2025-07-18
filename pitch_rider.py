@@ -52,8 +52,9 @@ class PitchRider:
         self.should_reverse_tempo_fader = False
 
         # The following only applies to certain types of jogs.
-        # The other type sends messages with a capped rate and increased magnitude (data byte)
+        # The other type sends messages with a capped rate and increased magnitude (data byte).
         self.jog_messages_per_revolution = 120
+        self.messages_per_second = self.jog_messages_per_revolution / (60 / 33) # = 66 in this case.
 
         # # Approximate value. TKFX tends to skip a lot of steps when turned fast.
         # self.jog_magnitude_coefficient = (
@@ -63,6 +64,7 @@ class PitchRider:
 
         # self.delta_time = 1.0 / self.tempo_refresh_rate
         self.delta_time = 0.1
+        self.nudge_coefficient = self.delta_time * self.messages_per_second # The coefficient used in nudge_amount calculation.
 
         # Applied when a track is playing so that the maximum tempo increase from nudging never exceeds +10%.
         self.nudge_coefficient = 0.1
@@ -175,6 +177,27 @@ class PitchRider:
                 self.jog_touch[deck_id] = False
 
             # TODO elif tempo codes...
+    
+    def tick_thread(self):
+        """
+        Calculate self.nudge_amount for each deck
+        """
+        
+        while True:
+            for deck_id, msg_sum in enumerate(self.nudge_msg_accumulator):
+                self.nudge_amount[deck_id] = msg_sum * self.nudge_coefficient
+
+            old_tempo = self.tempo.copy()
+
+            for deck_id in range(4):
+                self.tempo_transformation(deck_id)
+
+                if not self.tempo[deck_id] == old_tempo[deck_id]:
+                    self.send_tempo_msg(deck_id)
+
+
+
+
 
     def select_next_tempo_range(self, deck_id):
         """
@@ -195,6 +218,25 @@ class PitchRider:
             1.0 + (self.pitch_amount[deck_id] * self.tempo_range[deck_id])
         ) * (1.0 + self.nudge_amount[deck_id] * self.nudge_coefficient)
 
+    def send_tempo_msg(self, deck_id):
+        """
+        Transform inner tempo float value into a midi message and send it out.
+        """
+
+        tempo_norm = max(0.0, min(2.0, self.tempo[deck_id])) / 2.0 # 0.0..1.0
+        tempo_14_bit = int(tempo_norm * 16383 + 0.5)   # yields 0..16383
+        
+        msb = (tempo_14_bit >> 7) & 0x7F          # 0..127
+        lsb = tempo_14_bit        & 0x7F          # 0..127
+
+        # TODO Remove hard-coded midi message values
+        msb_msg = mido.Message.from_bytes([0xB0 + deck_id, 0x00, msb])
+        lsb_msg = mido.Message.from_bytes([0xB0 + deck_id, 0x20, lsb])
+        self.midi_out.send(msb_msg)
+        self.midi_out.send(lsb_msg)
+
+
+
     def jog(self, msg):
         """
         Process jog nudging.
@@ -205,7 +247,7 @@ class PitchRider:
         with self.nudge_msg_accumulator_lock[deck_id]:
             self.nudge_msg_accumulator[deck_id] += v
 
-        self.nudge_amount[deck_id] += self.get_jog_value_delta(v)
+        # self.nudge_amount[deck_id] += self.get_jog_value_delta(v)
 
     def get_jog_value_delta(self, value):
         """
