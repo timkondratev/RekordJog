@@ -50,11 +50,10 @@ class PitchRider:
 
         # The following only applies to certain types of jogs.
         # The other type sends messages with a capped rate and increased magnitude (data byte).
-        self.jog_messages_per_revolution = 136
+        self.jog_messages_per_revolution = 120
         self.messages_per_second = self.jog_messages_per_revolution / (60 / 33)
 
         self.tick_delta_time = 0.1
-        self.cleanup_delta_time = 0.2
         self.nudge_coefficient = (
             self.tick_delta_time * self.messages_per_second
         )  # The coefficient used in nudge_amount calculation.
@@ -62,7 +61,6 @@ class PitchRider:
         # Applied when nudging a track (instead of scratching).
         self.nudge_reducer_coefficient = 0.02
 
-        # RESOURCES
 
         self.tempo_range_options = [
             # For ranges 6%, 10%, 16%, and WIDE (100%) the values are 0.06, 0.1, 0.16, and 1.0 accordingly.
@@ -72,7 +70,11 @@ class PitchRider:
             1.0,
         ]
 
-        self.deck_play_pause_codes = {
+
+        # EXTERNAL RESOURCES
+
+        # From actual controller
+        self.deck_play_pause_codes_orig = {
             (0xB0, 0x07): 0,  # Deck 1.
             (0xB0, 0x27): 1,  # Deck 2.
             (0xB0, 0x47): 2,  # Deck 3.
@@ -81,14 +83,14 @@ class PitchRider:
 
         # Below are the first two bytes of controller-specific MIDI messages for jog rotation (decks 1 to 4 are indexed as 0 to 3).
         # The third byte carries value that indicates speed and direction of rotation. Different controllers use different ways to encode this value.
-        self.jog_turn_codes = {
+        self.jog_turn_codes_orig = {
             (0xB0, 0x05): 0,  # Deck 1.
             (0xB0, 0x25): 1,  # Deck 2.
             (0xB0, 0x45): 2,  # Deck 3.
             (0xB0, 0x65): 3,  # Deck 4.
         }
-        self.jog_middle_value = 0x40
-        self.jog_touch_codes = {
+        self.jog_middle_value_orig = 0x40
+        self.jog_touch_codes_orig = {
             (0xB0, 0x06): 0,  # Deck 1.
             (0xB0, 0x26): 1,  # Deck 2.
             (0xB0, 0x46): 2,  # Deck 3.
@@ -133,7 +135,15 @@ class PitchRider:
             0.0,
         ]
 
-        self.deck_playing = [
+        self.deck_play_button = [
+            False,
+            False,
+            False,
+            False,
+        ]
+
+        # Ensures play is activated for scratching when track is actually paused
+        self.scratch_play_toggle = [
             False,
             False,
             False,
@@ -190,18 +200,17 @@ class PitchRider:
         for ims in self.midi_inp:
             ims_2b = tuple(ims.bytes()[:2])
 
-            if ims_2b in self.jog_turn_codes:
+            if ims_2b in self.jog_turn_codes_orig:
                 self.process_jog(ims)
 
-            elif ims_2b in self.jog_touch_codes:
-                deck_id = self.jog_touch_codes[ims_2b]
+            elif ims_2b in self.jog_touch_codes_orig:
+                deck_id = self.jog_touch_codes_orig[ims_2b]
                 self.jog_touch[deck_id] = True if ims.bytes()[2] == 127 else False
                 print(f" Jog id {deck_id} is touched: {self.jog_touch[deck_id]}")
 
-            elif ims_2b in self.deck_play_pause_codes:
-                deck_id = self.deck_play_pause_codes[ims_2b]
-                self.deck_playing[deck_id] = not self.deck_playing[deck_id]
-                print(f" Deck id {deck_id} is playing: {self.deck_playing[deck_id]}")
+            elif ims_2b in self.deck_play_pause_codes_orig:
+                deck_id = self.deck_play_pause_codes_orig[ims_2b]
+                self.send_play_pause(deck_id)
 
             if not self.running:
                 break
@@ -226,11 +235,26 @@ class PitchRider:
             for deck_id in range(4):
                 self.tempo_transformation(deck_id)
 
+                # HANDLE PLAY/PAUSE ON JOG TOUCH
+                if (self.jog_touch[deck_id] 
+                    and not self.deck_play_button[deck_id] 
+                    and not self.scratch_play_toggle[deck_id]
+                    ):
+                    self.send_play_pause(deck_id)
+                    self.scratch_play_toggle[deck_id] = True
+
+                elif not self.jog_touch[deck_id] and self.scratch_play_toggle[deck_id]:
+                    self.send_play_pause(deck_id)
+                    self.scratch_play_toggle[deck_id] = False
+
+
+                # HANDLE SCRATCHING
                 if self.tempo[deck_id] < 0 and not self.last_reverse_flick[deck_id]:
                     self.send_reverse_flick(deck_id)
 
                 elif self.tempo[deck_id] >= 0 and self.last_reverse_flick[deck_id]:
                     self.send_reverse_flick(deck_id)
+                ####################
 
                     
 
@@ -262,12 +286,19 @@ class PitchRider:
         else:
             self.tempo[deck_id] = self.nudge_amount[deck_id]
 
+    def send_play_pause(self, deck_id):
+        play_msg = mido.Message.from_bytes([0x80 + deck_id, 0x00,  0x7F])
+        self.midi_out.send(play_msg)
+        self.deck_play_button[deck_id] = not self.deck_play_button[deck_id]
+        print(f" Deck id {deck_id} is playing: {self.deck_play_button[deck_id]}")
+
+
     def send_reverse_flick(self, deck_id):
         """
         Send Reverse message in case of scratching
         """
-        rev_msg = mido.Message.from_bytes([0x80 + deck_id, 0x00,  0x7F])
-        print(self.midi_out.send(rev_msg))
+        rev_msg = mido.Message.from_bytes([0x90 + deck_id, 0x00,  0x7F])
+        self.midi_out.send(rev_msg)
         self.last_reverse_flick[deck_id] = not self.last_reverse_flick[deck_id]
         print(f"REVERSE DECK {deck_id}: {self.last_reverse_flick[deck_id]}")
 
@@ -297,7 +328,7 @@ class PitchRider:
         """
         Process jog nudging. Works for every jog.
         """
-        deck_id = self.jog_turn_codes[tuple(msg.bytes()[:2])]
+        deck_id = self.jog_turn_codes_orig[tuple(msg.bytes()[:2])]
         v = msg.bytes()[2]  # Value from jog
 
         with self.nudge_msg_accumulator_lock[deck_id]:
@@ -308,7 +339,7 @@ class PitchRider:
         """
         The current implementation only works for jogs with middle value of 0x40.
         """
-        return self.jog_middle_value - value
+        return self.jog_middle_value_orig - value
 
 
 def main():
