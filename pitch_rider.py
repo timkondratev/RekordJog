@@ -48,16 +48,18 @@ class PitchRider:
         self.midi_inp = midi_inp
         self.midi_out = midi_out
 
-        # The following only applies to certain types of jogs.
-        # The other type sends messages with a capped rate and increased magnitude (data byte).
-        self.jog_messages_per_revolution = 120
-        self.messages_per_second = self.jog_messages_per_revolution / (60 / 33)
+        # # The following only applies to certain types of jogs.
+        # # The other type sends messages with a capped rate and increased magnitude (data byte).
+        # self.jog_messages_per_revolution = 120
+        # self.messages_per_second = self.jog_messages_per_revolution / (60 / 33)
 
         self.tick_delta_time = 0.1
-        self.nudge_coefficient = (
-            self.tick_delta_time * self.messages_per_second
-        )  # The coefficient used in nudge_amount calculation.
+        # self.nudge_coefficient = (
+        #     self.tick_delta_time * self.messages_per_second
+        # )  # The coefficient used in nudge_amount calculation.
 
+
+        self.nudge_coefficient = 0.18
         # Applied when nudging a track (instead of scratching).
         self.nudge_reducer_coefficient = 0.02
 
@@ -223,12 +225,20 @@ class PitchRider:
         """
 
         while self.running:
-            for deck_id, msg_sum in enumerate(self.nudge_msg_accumulator):
-                self.nudge_amount[deck_id] = msg_sum / self.nudge_coefficient
+            for deck_id in range(4):
+
+                SMOOTHING = 0.3 # 0..1
+                THRESHOLD = 0.05
+
+                self.nudge_amount[deck_id] = (self.nudge_msg_accumulator[deck_id] * (1-SMOOTHING)) * self.nudge_coefficient
+
+                self.nudge_msg_accumulator[deck_id] *= SMOOTHING
+                if abs(self.nudge_msg_accumulator[deck_id]) < THRESHOLD: 
+                    self.nudge_msg_accumulator[deck_id] = 0.0
+
 
                 # print(f"Nudge acc: {self.nudge_msg_accumulator[deck_id]}")
                 # print(f"Nudge amount: {self.nudge_amount[deck_id]}")
-                self.nudge_msg_accumulator[deck_id] = 0
 
             old_tempo = self.tempo.copy()
 
@@ -236,16 +246,19 @@ class PitchRider:
                 self.tempo_transformation(deck_id)
 
                 # HANDLE PLAY/PAUSE ON JOG TOUCH
+                # TODO Toggle quantize off/on !!!!!!!!
                 if (self.jog_touch[deck_id] 
                     and not self.deck_play_button[deck_id] 
                     and not self.scratch_play_toggle[deck_id]
                     ):
                     self.send_play_pause(deck_id)
                     self.scratch_play_toggle[deck_id] = True
+                    print("SCRATCH PLAY ACTIVATED")
 
                 elif not self.jog_touch[deck_id] and self.scratch_play_toggle[deck_id]:
                     self.send_play_pause(deck_id)
                     self.scratch_play_toggle[deck_id] = False
+                    print("SCRATCH PLAY DEACTIVATED")
 
 
                 # HANDLE SCRATCHING
