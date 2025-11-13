@@ -48,16 +48,15 @@ class PitchRider:
         self.midi_inp = midi_inp
         self.midi_out = midi_out
 
-        self.should_reverse_tempo_fader = False
-
         # The following only applies to certain types of jogs.
         # The other type sends messages with a capped rate and increased magnitude (data byte).
         self.jog_messages_per_revolution = 136
         self.messages_per_second = self.jog_messages_per_revolution / (60 / 33)
 
-        self.delta_time = 0.1
+        self.tick_delta_time = 0.1
+        self.cleanup_delta_time = 0.2
         self.nudge_coefficient = (
-            self.delta_time * self.messages_per_second
+            self.tick_delta_time * self.messages_per_second
         )  # The coefficient used in nudge_amount calculation.
 
         # Applied when nudging a track (instead of scratching).
@@ -90,7 +89,6 @@ class PitchRider:
         }
         self.jog_middle_value = 0x40
         self.jog_touch_codes = {
-            # TODO Replace with actual values
             (0xB0, 0x06): 0,  # Deck 1.
             (0xB0, 0x26): 1,  # Deck 2.
             (0xB0, 0x46): 2,  # Deck 3.
@@ -149,6 +147,13 @@ class PitchRider:
             False,
         ]
 
+        self.last_reverse_flick = [
+            False,
+            False,
+            False,
+            False,
+        ]
+
         self.nudge_msg_accumulator = [
             # Add up nudge values for each jog. Reset to 0 every tick.
             0,
@@ -186,7 +191,7 @@ class PitchRider:
             ims_2b = tuple(ims.bytes()[:2])
 
             if ims_2b in self.jog_turn_codes:
-                self.jog(ims)
+                self.process_jog(ims)
 
             elif ims_2b in self.jog_touch_codes:
                 deck_id = self.jog_touch_codes[ims_2b]
@@ -205,7 +210,7 @@ class PitchRider:
 
     def tick_thread(self):
         """
-        Calculate self.nudge_amount for each deck
+        Calculate self.nudge_amount for each deck and send a MIDI message.
         """
 
         while self.running:
@@ -221,15 +226,19 @@ class PitchRider:
             for deck_id in range(4):
                 self.tempo_transformation(deck_id)
 
-                if self.nudge_amount[deck_id] < 0:
-                    # TODO
-                    self.midi_out.send()
+                if self.tempo[deck_id] < 0 and not self.last_reverse_flick[deck_id]:
+                    self.send_reverse_flick(deck_id)
 
+                elif self.tempo[deck_id] >= 0 and self.last_reverse_flick[deck_id]:
+                    self.send_reverse_flick(deck_id)
+
+                    
 
                 if not self.tempo[deck_id] == old_tempo[deck_id]:
+                    print(f"Nudge amt: {self.nudge_amount[deck_id]}")
                     self.send_tempo_msg(deck_id)
 
-            time.sleep(self.delta_time)
+            time.sleep(self.tick_delta_time)
 
     def select_next_tempo_range(self, deck_id):
         """
@@ -251,7 +260,17 @@ class PitchRider:
                 1.0 + (self.pitch_amount[deck_id] * self.tempo_range[deck_id])
             ) * (1.0 + self.nudge_amount[deck_id] * self.nudge_reducer_coefficient)
         else:
-            self.tempo[deck_id] = abs(self.nudge_amount[deck_id])
+            self.tempo[deck_id] = self.nudge_amount[deck_id]
+
+    def send_reverse_flick(self, deck_id):
+        """
+        Send Reverse message in case of scratching
+        """
+        rev_msg = mido.Message.from_bytes([0x80 + deck_id, 0x00,  0x7F])
+        print(self.midi_out.send(rev_msg))
+        self.last_reverse_flick[deck_id] = not self.last_reverse_flick[deck_id]
+        print(f"REVERSE DECK {deck_id}: {self.last_reverse_flick[deck_id]}")
+
 
     def send_tempo_msg(self, deck_id):
         """
@@ -260,7 +279,7 @@ class PitchRider:
 
         print(f"Tempos: {self.tempo}\n")
 
-        tempo_norm = max(0.0, min(2.0, self.tempo[deck_id])) / 2.0  # 0.0..1.0
+        tempo_norm = max(0.0, min(2.0, abs(self.tempo[deck_id]))) / 2.0  # 0.0..1.0
         tempo_14_bit = int(tempo_norm * 16383 + 0.5)  # yields 0..16383
 
         msb = (tempo_14_bit >> 7) & 0x7F  # 0..127
@@ -274,16 +293,16 @@ class PitchRider:
         self.midi_out.send(msb_msg)
         self.midi_out.send(lsb_msg)
 
-    def jog(self, msg):
+    def process_jog(self, msg):
         """
-        Process jog nudging.
+        Process jog nudging. Works for every jog.
         """
         deck_id = self.jog_turn_codes[tuple(msg.bytes()[:2])]
         v = msg.bytes()[2]  # Value from jog
 
         with self.nudge_msg_accumulator_lock[deck_id]:
             self.nudge_msg_accumulator[deck_id] -= self.get_jog_value_delta(v)
-            print(f"MIDI message value: {self.get_jog_value_delta(v)}")
+            # print(f"MIDI message value: {self.get_jog_value_delta(v)}")
 
     def get_jog_value_delta(self, value):
         """
