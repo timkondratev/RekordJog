@@ -166,6 +166,8 @@ class PitchRider:
             False,
         ]
 
+        self.last_quantize_flick = True
+
         self.nudge_msg_accumulator = [
             # Add up nudge values for each jog. Reset to 0 every tick.
             0,
@@ -246,7 +248,6 @@ class PitchRider:
                 self.tempo_transformation(deck_id)
 
                 # HANDLE PLAY/PAUSE ON JOG TOUCH
-                # TODO Toggle quantize off/on !!!!!!!!
                 if (self.jog_touch[deck_id] 
                     and not self.deck_play_button[deck_id] 
                     and not self.scratch_play_toggle[deck_id]
@@ -263,9 +264,11 @@ class PitchRider:
 
                 # HANDLE SCRATCHING
                 if self.tempo[deck_id] < 0 and not self.last_reverse_flick[deck_id]:
+                    self.send_quantize_flick()
                     self.send_reverse_flick(deck_id)
 
                 elif self.tempo[deck_id] >= 0 and self.last_reverse_flick[deck_id]:
+                    self.send_quantize_flick()
                     self.send_reverse_flick(deck_id)
                 ####################
 
@@ -314,6 +317,18 @@ class PitchRider:
         self.midi_out.send(rev_msg)
         self.last_reverse_flick[deck_id] = not self.last_reverse_flick[deck_id]
         print(f"REVERSE DECK {deck_id}: {self.last_reverse_flick[deck_id]}")
+
+
+    def send_quantize_flick(self):
+        """
+        Send Reverse message in case of scratching
+        """
+        # TODO Known bug: quantize gets released too soon if jog inertia is present (due to smoothing).
+        # This results in slightly scratching forward instead of backspin.
+        qnt_msg =  mido.Message.from_bytes([0xA0, 0x00,  0x7F])
+        self.midi_out.send(qnt_msg)
+        self.last_quantize_flick = not self.last_quantize_flick
+        print(f"QUANTIZE: {self.last_quantize_flick}")
 
 
     def send_tempo_msg(self, deck_id):
