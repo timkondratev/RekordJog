@@ -3,13 +3,8 @@ import mido
 from functions.check_config import check_config
 from functions.rekordjog_start_sequence import rekordjog_start_sequence
 
-# The JOG_MULTIPLIER is required for smooth jog operation.
 JOG_MULTIPLIER = 1
 
-# TODO: Fill this with actual values found via midi_investigator.py
-# Pioneer expects 64 as neutral.
-# Clockwise: 65 - 84
-# Counter-Clockwise: 46 - 63
 CONV_J_VAL = {
     # Counter-Clockwise (CCW)
     46: 46, 47: 47, 48: 48, 49: 49, 50: 50,
@@ -48,7 +43,6 @@ def jog(midi_out, msg):
         v = map_jog_value(msg.bytes()[2])
 
         ms = mido.Message.from_bytes([176 + id, 0x22, v])
-        #print(f"[DEBUG] Jog: Sending {ms}")
 
         for i in range(JOG_MULTIPLIER):
             midi_out.send(ms)
@@ -67,7 +61,6 @@ def main():
 
         rekordjog_start_sequence()
         print("\nTraktor Kontrol S2 MK3 handler started.")
-        print("Make sure you have filled out the MIDI values in RekordJog_TraktorKontrolS2MK3.py!")
 
         while True:
             ims = midi_inp.receive()
@@ -81,17 +74,14 @@ def main():
 
                 if hasattr(ims, 'type') and ims.type == 'note_on' and ims.velocity == 0:
                     release = mido.Message.from_bytes([0x90 + deck_id, 0x36, 0x00])
-                    #print(f"[DEBUG] Touch Release (vel 0): Sending {release}")
                     midi_out.send(release)
                 else:
                     touch = mido.Message.from_bytes([0x90 + deck_id, 0x36, 0x7F])
-                    #print(f"[DEBUG] Touch On: Sending {touch}")
                     midi_out.send(touch)
 
             elif ims_2b in TOUCH_OFF_CODES:
                 deck_id = TOUCH_OFF_CODES[ims_2b]
                 release = mido.Message.from_bytes([0x90 + deck_id, 0x36, 0x00])
-                #print(f"[DEBUG] Touch Off: Sending {release}")
                 midi_out.send(release)
 
     except KeyboardInterrupt:
