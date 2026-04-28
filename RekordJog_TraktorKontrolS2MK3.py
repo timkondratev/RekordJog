@@ -34,8 +34,10 @@ TOUCH_OFF_CODES = {
     (0x93, 0x14): 1
 }
 
+
 def map_jog_value(midi_value):
     return CONV_J_VAL.get(midi_value, 64)
+
 
 def jog(midi_out, msg):
     try:
@@ -48,6 +50,7 @@ def jog(midi_out, msg):
             midi_out.send(ms)
     except KeyError:
         pass
+
 
 def main():
     midi_inp, midi_out = check_config()
@@ -73,10 +76,12 @@ def main():
                 deck_id = TOUCH_ON_CODES[ims_2b]
 
                 if hasattr(ims, 'type') and ims.type == 'note_on' and ims.velocity == 0:
-                    release = mido.Message.from_bytes([0x90 + deck_id, 0x36, 0x00])
+                    release = mido.Message.from_bytes(
+                        [0x90 + deck_id, 0x36, 0x00])
                     midi_out.send(release)
                 else:
-                    touch = mido.Message.from_bytes([0x90 + deck_id, 0x36, 0x7F])
+                    touch = mido.Message.from_bytes(
+                        [0x90 + deck_id, 0x36, 0x7F])
                     midi_out.send(touch)
 
             elif ims_2b in TOUCH_OFF_CODES:
@@ -86,6 +91,7 @@ def main():
 
     except KeyboardInterrupt:
         print("\nClosing RekordJog, bye.")
+
 
 if __name__ == "__main__":
     main()
