@@ -8,8 +8,10 @@ This program allows jog wheels and pitch control on third-party controllers to w
 -   Hercules DJControl
     -   Inpulse 200
     -   Mix
-- Numark
+-   Numark
     -   Mixtrack 3
+-   Native Instruments
+    -   Traktor Kontrol S2 MK3
 
 To use it with other controllers, you'll need to find the MIDI calls and their pattern using MIDI-OX or a similar tool and modify the source code accordingly. Feel free to send a Pull Request!
 
