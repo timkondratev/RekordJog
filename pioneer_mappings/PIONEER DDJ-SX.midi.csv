@@ -1,35 +1,381 @@
-@file,1,PIONEER DDJ-SX,,,,,,,,,,,,
+@file,1,PIONEER DDJ-SX
 #name,function,type,input,deck1,deck2,deck3,deck4,output,deck1,deck2,deck3,deck4,option,comment
 ,,,,,,,,,,,,,,
+# Browser,,,,,,,,,,,,,,
+Browse,Browse,Rotary,B640,,,,,,,,,,,Browse(Track/Folder Select)
+Zoom,Browse+Shift,Rotary,B664,,,,,,,,,,,
+Forward,Browse+Press,Button,9641,,,,,,,,,,,Library Forward (Folder Open)
+Forward,Browse+Press+Shift,Button,9642,,,,,,,,,,,Library Forward (Folder Open)
+Load,Load,Button,,9646,9647,9648,9649,,,,,,,Load to Deck / Instant Double (double click)
+SortBPM,Load1+Shift,Button,9658,,,,,9658,,,,,,Sort by BPM
+SortSONG,Load2+Shift,Button,9659,,,,,9659,,,,,,Sort by SONG
+SortTRACK,Load3+Shift,Button,9660,,,,,9660,,,,,,Sort by TRACK#
+SortARTIST,Load4+Shift,Button,9661,,,,,9661,,,,,,Sort by ARTIST
+Back,Back,Button,9665,,,,,,,,,,,Library Back (Folder Close)
+Area,Back+Shift,Button,9666,,,,,,,,,,,Area (Change panel type from among several types)
+AddToTagList,LoadPrepare,Button,9667,,,,,,,,,,,Tag Track
+RelatedTracks,LoadPrepare+Shift,Button,9668,,,,,,,,,,,Related Track
 ,,,,,,,,,,,,,,
+# Deck,,,,,,,,,,,,,,
+PlayPause,PlayPause,Button,900B,0,1,2,3,900B,0,1,2,3,Fast;Priority=50,Play/Pause
+PlayPause,PlayPause+Shift,Button,9047,0,1,2,3,9047,0,1,2,3,Fast;Priority=50,Play/Pause
+Cue,Cue,Button,900C,0,1,2,3,900C,0,1,2,3,Fast;Priority=50,Cue Set/Play Cue Back
+JumpToTrackStart,Cue+Shift,Button,9048,0,1,2,3,9048,0,1,2,3,Fast;Priority=50,Jump to track start
 ,,,,,,,,,,,,,,
+JogScratch,JogScratch,JogRotate,B022,0,1,2,3,,,,,,RO,Scratch
+JogPitchBend,JogPitchBend,JogRotate,B023,0,1,2,3,,,,,,RO,Pitch Bend
+JogSearch,JogSearch,Difference,B01F,0,1,2,3,,,,,,RO,Search
+JogTouch,JogTouch,JogTouch,9036,0,1,2,3,,,,,,RO,Touch
+JogTouch,JogTouch+Shift,JogTouch,9067,0,1,2,3,,,,,,RO,Touch
 ,,,,,,,,,,,,,,
+WheelPitchBend,WheelPitchBend,JogRotate,B021,0,1,2,3,,,,,,RO,Pitch Bend
+WheelSearch,WheelSearch,JogRotate,B026,0,1,2,3,,,,,,RO,Pitch Bend
 ,,,,,,,,,,,,,,
+TempoSlider,TempoSlider,KnobSliderHiRes,B000,0,1,2,3,,,,,,Fast,Tempo Control
+TempoSlider,TempoSlider+Shift,KnobSliderHiRes,B005,0,1,2,3,,,,,,Fast,Tempo Control
+MasterTempo,KeyLock,Button,901A,0,1,2,3,901A,0,1,2,3,,MasterTempo On/Off
+TempoRange,KeyLock+Shift,Button,9060,0,1,2,3,9060,0,1,2,3,,Tempo Range
+#,KeyLock+LongPress,Button,901C,0,1,2,3,901C,0,1,2,3,,No function assigned here
+NeedleSearch,NeedleSearch,Value,B003,0,1,2,3,,,,,,Max=16383,Needle Search slide(00-7f)
+#,NeedleSearch+Touch,Button,9043,0,1,2,3,,,,,,,Needle Search touch(00/7f)
+NeedleSearch,NeedleSearch+Shift,Value,B028,0,1,2,3,,,,,,Max=16383,Needle Search slide(00-7f)
+#,NeedleSearch+Touch+Shift,Button,9044,0,1,2,3,,,,,,,Needle Search touch(00/7f)
+Deck,DeckSelect,Button,9072,0,1,2,3,,,,,,RO,Select Deck
+#,Deck+Shift,Button,9073,0,1,2,3,,,,,,,
+Sync,Sync,Button,9058,0,1,2,3,9058,0,1,2,3,Blink=600,Sync On/Off
+Master,Sync+Shift,Button,905C,0,1,2,3,905C,0,1,2,3,,Master On/Off
+AutoLoop,AutoLoop,Button,9014,0,1,2,3,9014,0,1,2,3,,Auto Loop On/Off
+ActiveLoop,AutoLoop+Shift,Button,9050,0,1,2,3,9050,0,1,2,3,,Loop Active/Non active
+LoopHalf,LoopHalf,Button,9012,0,1,2,3,9012,0,1,2,3,Fast,Loop Size Select (Half)
+LoopMoveLeft,LoopHalf+Shift,Button,9061,0,1,2,3,9061,0,1,2,3,,Loop Move left
+LoopDouble,LoopDouble,Button,9013,0,1,2,3,9013,0,1,2,3,Fast,Loop Size Select (Double)
+LoopMoveRight,LoopDouble+Shift,Button,9062,0,1,2,3,9062,0,1,2,3,,Loop Move right
+LoopIn,LoopIn,Button,9010,0,1,2,3,9010,0,1,2,3,Fast,Loop in/Loop in adjust
+ReTrigger,LoopIn+Shift,Button,904C,0,1,2,3,904C,0,1,2,3,Fast,RE-TRIGGER
+LoopOut,LoopOut,Button,9011,0,1,2,3,9011,0,1,2,3,Fast,Loop out/Loop out adjust
+ReloopExit,LoopOut+Shift,Button,904D,0,1,2,3,904D,0,1,2,3,Fast,Reloop/Exit
+SlipReverse,Censor,Button,9015,0,1,2,3,9015,0,1,2,3,Fast,SLIP Reverse
+Reverse,Censor+Shift,Button,9038,0,1,2,3,9038,0,1,2,3,Fast,Reverse
+TempoDown,TempoDown,Indicator,,,,,,9037,0,1,2,3,,indicator for Tempo down
+TempoUp,TempoUp,Indicator,,,,,,9034,0,1,2,3,,indicator for Tempo up
+Slip,Slip,Button,9040,0,1,2,3,9040,0,1,2,3,,SLIP mode On/Off
+Slip,Slip+Shift,Button,9063,0,1,2,3,9063,0,1,2,3,,SLIP mode On/Off
+Vinyl,Vinyl,Button,9017,0,1,2,3,900D,0,1,2,3,,Vinyl Mode On/Off (for JOG)
+GridAdjust,GridAdjust,Button,9079,0,1,2,3,9079,0,1,2,3,,Beat Grid Adjust
+GridAdjustHalf,GridAdjust+Shift,Button,9064,0,1,2,3,9064,0,1,2,3,,Beat Adjust 1/2x
+GridSlide,GridSlide,Button,900A,0,1,2,3,900A,0,1,2,3,,Beat Grid Slide
+GridAdjustDouble,GridSlide+Shift,Button,9065,0,1,2,3,9065,0,1,2,3,,Beat Adjust 2x
+Shift,Shift,Button,903F,,,,,,,,,,RO,Shift
+Shift,Shift,Button,913F,,,,,,,,,,RO,Shift
+Shift,Shift,Button,923F,,,,,,,,,,RO,Shift
+Shift,Shift,Button,933F,,,,,,,,,,RO,Shift
 ,,,,,,,,,,,,,,
+# Mixer,,,,,,,,,,,,,,
+CrossFader,CrossFader,KnobSliderHiRes,B61F,,,,,,,,,,Fast,Crossfader
+ChannelFader,ChannelFader,KnobSliderHiRes,B013,0,1,2,3,,,,,,,CH Fader
+ChannelFaderStartPlay,ChannelFaderStartPlay,Button,9066,0,1,2,3,,,,,,RO,CH Fader Start (PLAY)
+#ChannelFaderStartSync,ChannelFaderStartSync,Button,9051,0,1,2,3,,,,,,RO,CH Fader Start (SYNC)
+ChannelFaderStartCue,ChannelFaderStartCue,Button,9052,0,1,2,3,,,,,,RO,CH Fader Start (CUE)
+Gain,Gain,KnobSliderHiRes,B004,0,1,2,3,,,,,,Fast,Gain
+EQHigh,EQHigh,KnobSliderHiRes,B007,0,1,2,3,,,,,,Fast,EQ High
+EQMid,EQMid,KnobSliderHiRes,B00B,0,1,2,3,,,,,,Fast,EQ Mid
+EQLow,EQLow,KnobSliderHiRes,B00F,0,1,2,3,,,,,,Fast,EQ Low
+HeadphoneCue,HeadphoneCue,Button,9054,0,1,2,3,9054,0,1,2,3,,Headphone CUE On/Off
+TapBpm,HeadphoneCue+Shift,Button,9068,0,1,2,3,9068,0,1,2,3,,TAP BPM
+MasterCue,MasterCue,Button,9663,,,,,,,,,,,Master CUE (All Headphone CUE valid/invalid) (no output)
+SamplerCue,MasterCue+Shift,Button,9662,,,,,9662,,,,,,Headphone CUE On/Off
+CrossfaderAssign.A,CrossfaderAssign.A,Button,9016,0,1,2,3,,,,,,,C.F.assign to deck Left
+CrossfaderAssign.Thru,CrossfaderAssign.Thru,Button,901D,0,1,2,3,,,,,,,Through Crossfader
+CrossfaderAssign.B,CrossfaderAssign.B,Button,9018,0,1,2,3,,,,,,,C.F.assign to deck Right
+ChannelLevel,ChannelLevel,Indicator,,,,,,B002,0,1,2,3,RO;Priority=50,CH Level Indicator
+CrossFaderCurve,CrossFaderCurve,KnobSliderHiRes,B601,,,,,,,,,,,Crossfader curve adjustment
+InputSelect,InputSelect,Button,9019,0,1,2,3,,,,,,,Select INPUT to PC/PHONO/LINE
 ,,,,,,,,,,,,,,
+# Effect,,,,,,,,,,,,,,
+FX1-1,FX1-1,KnobSliderHiRes,B402,,,,,,,,,,,FX1-1 Effect Depth
+FX1-1,FX1-1+Shift,KnobSliderHiRes,B412,,,,,,,,,,,FX1-1 Effect Depth
+FX1-1On,FX1-1On,Button,9447,,,,,9447,,,,,,FX1-1 Effect On/Off
+FX1-1Select,FX1-1On+Shift,Button,9463,,,,,9463,,,,,,FX select
 ,,,,,,,,,,,,,,
+FX1-2,FX1-2,KnobSliderHiRes,B404,,,,,,,,,,,FX1-2 Effect Depth
+FX1-2,FX1-2+Shift,KnobSliderHiRes,B414,,,,,,,,,,,FX1-2 Effect Depth
+FX1-2On,FX1-2On,Button,9448,,,,,9448,,,,,,FX1-2 Effect On/Off
+FX1-2Select,FX1-2On+Shift,Button,9464,,,,,9464,,,,,,FX select/No function when single mode
 ,,,,,,,,,,,,,,
+FX1-3,FX1-3,KnobSliderHiRes,B406,,,,,,,,,,,FX1-3 Effect Depth
+FX1-3,FX1-3+Shift,KnobSliderHiRes,B416,,,,,,,,,,,FX1-3 Effect Depth
+FX1-3On,FX1-3On,Button,9449,,,,,9449,,,,,,FX1-3 Effect On/Off
+FX1-3Select,FX1-3On+Shift,Button,9465,,,,,9465,,,,,,FX select/No function when single mode
 ,,,,,,,,,,,,,,
+FX1BeatUpDown,FX1Beat,Rotary,B400,,,,,,,,,,,FX1 Effect beat down/up
+FX1ReleaseFXType,FX1Beat+Shift,Rotary,B410,,,,,,,,,,,Select FX1 RELEASE FX type
+FX1ReleaseFXOn,FX1Beat+Press,Button,9443,,,,,,,,,,,FX1 RELEASE FX On
+FX1ReleaseFXOn,FX1Beat+Press+Shift,Button,9440,,,,,,,,,,,FX1 RELEASE FX On
+FX1TapBeatWithLongPress,FX1Tap,Button,944A,,,,,944A,,,,,,FX1 Effect tap beat
+FX1FXMode,FX1Tap+Shift,Button,9466,,,,,9466,,,,,,Select FX1 FX mode
 ,,,,,,,,,,,,,,
+FX2-1,FX2-1,KnobSliderHiRes,B502,,,,,,,,,,,FX2-1 Effect Depth
+FX2-1,FX2-1+Shift,KnobSliderHiRes,B512,,,,,,,,,,,FX2-1 Effect Depth
+FX2-1On,FX2-1On,Button,9547,,,,,9547,,,,,,FX2-1 Effect On/Off
+FX2-1Select,FX2-1On+Shift,Button,9563,,,,,9563,,,,,,FX select
 ,,,,,,,,,,,,,,
+FX2-2,FX2-2,KnobSliderHiRes,B504,,,,,,,,,,,FX2-2 Effect Depth
+FX2-2,FX2-2+Shift,KnobSliderHiRes,B514,,,,,,,,,,,FX2-2 Effect Depth
+FX2-2On,FX2-2On,Button,9548,,,,,9548,,,,,,FX2-2 Effect On/Off
+FX2-2Select,FX2-2On+Shift,Button,9564,,,,,9564,,,,,,FX select/No function when single mode
 ,,,,,,,,,,,,,,
+FX2-3,FX2-3,KnobSliderHiRes,B506,,,,,,,,,,,FX2-3 Effect Depth
+FX2-3,FX2-3+Shift,KnobSliderHiRes,B516,,,,,,,,,,,FX2-3 Effect Depth
+FX2-3On,FX2-3On,Button,9549,,,,,9549,,,,,,FX2-3 Effect On/Off
+FX2-3Select,FX2-3On+Shift,Button,9565,,,,,9565,,,,,,FX select/No function when single mode
 ,,,,,,,,,,,,,,
+FX2BeatUpDown,FX2Beat,Rotary,B500,,,,,,,,,,,FX2 Effect beat down/up
+FX2ReleaseFXType,FX2Beat+Shift,Rotary,B510,,,,,,,,,,,Select FX2 RELEASE FX type
+FX2ReleaseFXOn,FX2Beat+Press,Button,9543,,,,,,,,,,,FX2 RELEASE FX On
+FX2ReleaseFXOn,FX2Beat+Press+Shift,Button,9540,,,,,,,,,,,FX2 RELEASE FX On
+FX2TapBeatWithLongPress,FX2Tap,Button,954A,,,,,954A,,,,,,FX2 Effect tap beat
+FX2FXMode,FX2Tap+Shift,Button,9566,,,,,9566,,,,,,Select FX2 FX mode
 ,,,,,,,,,,,,,,
+FX1Assign1,FX1Assign1,Button,964C,,,,,964C,,,,,,FX1 On/Off
+FX1Assign1,FX1Assign1+Shift,Button,9670,,,,,9670,,,,,,FX1 On/Off
+FX2Assign1,FX2Assign1,Button,9650,,,,,9650,,,,,,FX2 On/Off
+FX2Assign1,FX2Assign1+Shift,Button,9654,,,,,9654,,,,,,FX2 On/Off
 ,,,,,,,,,,,,,,
+FX1Assign2,FX1Assign2,Button,964D,,,,,964D,,,,,,FX1 On/Off
+FX1Assign2,FX1Assign2+Shift,Button,9671,,,,,9671,,,,,,FX1 On/Off
+FX2Assign2,FX2Assign2,Button,9651,,,,,9651,,,,,,FX2 On/Off
+FX2Assign2,FX2Assign2+Shift,Button,9655,,,,,9655,,,,,,FX2 On/Off
 ,,,,,,,,,,,,,,
+FX1Assign3,FX1Assign3,Button,964E,,,,,964E,,,,,,FX1 On/Off
+FX1Assign3,FX1Assign3+Shift,Button,9672,,,,,9672,,,,,,FX1 On/Off
+FX2Assign3,FX2Assign3,Button,9652,,,,,9652,,,,,,FX2 On/Off
+FX2Assign3,FX2Assign3+Shift,Button,9656,,,,,9656,,,,,,FX2 On/Off
 ,,,,,,,,,,,,,,
+FX1Assign4,FX1Assign4,Button,964F,,,,,964F,,,,,,FX1 On/Off
+FX1Assign4,FX1Assign4+Shift,Button,9673,,,,,9673,,,,,,FX1 On/Off
+FX2Assign4,FX2Assign4,Button,9653,,,,,9653,,,,,,FX2 On/Off
+FX2Assign4,FX2Assign4+Shift,Button,9657,,,,,9657,,,,,,FX2 On/Off
 ,,,,,,,,,,,,,,
+CFXParameterCH1,CFXParameterCH1,KnobSliderHiRes,B617,,,,,,,,,,Fast,CH1 CFX Depth
+CFXParameterCH1Center,CFXParameterCH1Center,Button,9674,,,,,,,,,,Fast,CH1 CFX Depth
+CFXParameterCH2,CFXParameterCH2,KnobSliderHiRes,B618,,,,,,,,,,Fast,CH2 CFX Depth
+CFXParameterCH2Center,CFXParameterCH2Center,Button,9675,,,,,,,,,,Fast,CH2 CFX Depth
+CFXParameterCH3,CFXParameterCH3,KnobSliderHiRes,B619,,,,,,,,,,Fast,CH3 CFX Depth
+CFXParameterCH3Center,CFXParameterCH3Center,Button,9676,,,,,,,,,,Fast,CH3 CFX Depth
+CFXParameterCH4,CFXParameterCH4,KnobSliderHiRes,B61A,,,,,,,,,,Fast,CH4 CFX Depth
+CFXParameterCH4Center,CFXParameterCH4Center,Button,9677,,,,,,,,,,Fast,CH4 CFX Depth
 ,,,,,,,,,,,,,,
+# Performance,,,,,,,,,,,,,,
+PAD1_HotCue,PAD1.HotCue.Call,Pad,9000,7,8,9,10,9000,7,8,9,10,Fast,HOT CUE1
+PAD1_HotCue+Shift,PAD1.HotCue.Delete,Pad,9008,7,8,9,10,9008,7,8,9,10,Fast,Delete HOT CUE1
+PAD1_PadFx1,PAD1.PadFx1,Pad,9010,7,8,9,10,9010,7,8,9,10,Fast,PAD FX1 Slot1 (momentary)
+PAD1_PadFx1+Shift,,Pad,9018,7,8,9,10,9018,7,8,9,10,Fast,PAD FX1 Slot1 (momentary)
+PAD1_Slicer,PAD1.Slicer,Pad,9020,7,8,9,10,9020,7,8,9,10,Fast,SLICER 1 Play
+PAD1_Slicer+Shift,,Pad,9028,7,8,9,10,9028,7,8,9,10,Fast,No function assigned here
+PAD1_Sampler,PAD1.Sampler.Start,Pad,9030,7,8,9,10,9030,7,8,9,10,Fast,Sample Slot 1 play
+PAD1_Sampler+Shift,PAD1.Sampler.Stop,Pad,9038,7,8,9,10,9038,7,8,9,10,Fast,Sample Slot 1 stop
+PAD1_BeatJump,PAD1.BeatJump,Pad,9040,7,8,9,10,9040,7,8,9,10,Fast,BEAT JUMP (REV1)
+PAD1_BeatJump+Shift,,Pad,9048,7,8,9,10,9048,7,8,9,10,Fast,BEAT JUMP (REV1)
+PAD1_PadFx2,PAD1.PadFx2,Pad,9050,7,8,9,10,9050,7,8,9,10,Fast,PAD FX2 Slot1 (momentary)
+PAD1_PadFx2+Shift,,Pad,9058,7,8,9,10,9058,7,8,9,10,Fast,PAD FX2 Slot1 (momentary)
+PAD1_SlicerLoop,PAD1.SlicerLoop,Pad,9060,7,8,9,10,9060,7,8,9,10,Fast,SLICER LOOP
+PAD1_SlicerLoop+Shift,,Pad,9068,7,8,9,10,9068,7,8,9,10,Fast,No function assigned here
+PAD1_VelocitySampler,PAD1.VelocitySampler.Start,Pad,9070,7,8,9,10,9070,7,8,9,10,Fast,Sample Slot1 Play
+PAD1_VelocitySampler+Velocity,PAD1.VelocitySampler.Level,Value,B030,7,8,9,10,,,,,,Fast,Sample Slot 1 Level (use Pad velocity)
+PAD1_VelocitySampler+Shift,PAD1.VelocitySampler.Stop,Pad,9078,7,8,9,10,9078,7,8,9,10,Fast,Sample Slot 1 stop
 ,,,,,,,,,,,,,,
+PAD2_HotCue,PAD2.HotCue.Call,Pad,9001,7,8,9,10,9001,7,8,9,10,Fast,HOT CUE2
+PAD2_HotCue+Shift,PAD2.HotCue.Delete,Pad,9009,7,8,9,10,9009,7,8,9,10,Fast,Delete HOT CUE2
+PAD2_PadFx1,PAD2.PadFx1,Pad,9011,7,8,9,10,9011,7,8,9,10,Fast,PAD FX1 Slot2 (momentary)
+PAD2_PadFx1+Shift,,Pad,9019,7,8,9,10,9019,7,8,9,10,Fast,PAD FX1 Slot2 (momentary)
+PAD2_Slicer,PAD2.Slicer,Pad,9021,7,8,9,10,9021,7,8,9,10,Fast,SLICER 2 Play
+PAD2_Slicer+Shift,,Pad,9029,7,8,9,10,9029,7,8,9,10,Fast,No function assigned here
+PAD2_Sampler,PAD2.Sampler.Start,Pad,9031,7,8,9,10,9031,7,8,9,10,Fast,Sample Slot2 play
+PAD2_Sampler+Shift,PAD2.Sampler.Stop,Pad,9039,7,8,9,10,9039,7,8,9,10,Fast,Sample Slot2 stop
+PAD2_BeatJump,PAD2.BeatJump,Pad,9041,7,8,9,10,9041,7,8,9,10,Fast,BEAT JUMP (FWD1)
+PAD2_BeatJump+Shift,,Pad,9049,7,8,9,10,9049,7,8,9,10,Fast,BEAT JUMP (FWD1)
+PAD2_PadFx2,PAD2.PadFx2,Pad,9051,7,8,9,10,9051,7,8,9,10,Fast,PAD FX2 Slot2 (momentary)
+PAD2_PadFx2+Shift,,Pad,9059,7,8,9,10,9059,7,8,9,10,Fast,PAD FX2 Slot2 (momentary)
+PAD2_SlicerLoop,PAD2.SlicerLoop,Pad,9061,7,8,9,10,9061,7,8,9,10,Fast,SLICER LOOP
+PAD2_SlicerLoop+Shift,,Pad,9069,7,8,9,10,9069,7,8,9,10,Fast,No function assigned here
+PAD2_VelocitySampler,PAD2.VelocitySampler.Start,Pad,9071,7,8,9,10,9071,7,8,9,10,Fast,Sample Slot2 Play
+PAD2_VelocitySampler+Velocity,PAD2.VelocitySampler.Level,Value,B031,7,8,9,10,,,,,,Fast,Sample Slot 2 Level (use Pad velocity)
+PAD2_VelocitySampler+Shift,PAD2.VelocitySampler.Stop,Pad,9079,7,8,9,10,9079,7,8,9,10,Fast,Sample Slot 2 stop
 ,,,,,,,,,,,,,,
-JogScratch,JogScratch,JogRotate,B00A,1,2,,,,,,,,RO,Scratch
+PAD3_HotCue,PAD3.HotCue.Call,Pad,9002,7,8,9,10,9002,7,8,9,10,Fast,HOT CUE3
+PAD3_HotCue+Shift,PAD3.HotCue.Delete,Pad,900A,7,8,9,10,900A,7,8,9,10,Fast,Delete HOT CUE3
+PAD3_PadFx1,PAD3.PadFx1,Pad,9012,7,8,9,10,9012,7,8,9,10,Fast,PAD FX1 Slot3 (momentary)
+PAD3_PadFx1+Shift,,Pad,901A,7,8,9,10,901A,7,8,9,10,Fast,PAD FX1 Slot3 (momentary)
+PAD3_Slicer,PAD3.Slicer,Pad,9022,7,8,9,10,9022,7,8,9,10,Fast,SLICER 3 Play
+PAD3_Slicer+Shift,,Pad,902A,7,8,9,10,902A,7,8,9,10,Fast,No function assigned here
+PAD3_Sampler,PAD3.Sampler.Start,Pad,9032,7,8,9,10,9032,7,8,9,10,Fast,Sample Slot 3 play
+PAD3_Sampler+Shift,PAD3.Sampler.Stop,Pad,903A,7,8,9,10,903A,7,8,9,10,Fast,Sample Slot 3 stop
+PAD3_BeatJump,PAD3.BeatJump,Pad,9042,7,8,9,10,9042,7,8,9,10,Fast,BEAT JUMP (REV2)
+PAD3_BeatJump+Shift,,Pad,904A,7,8,9,10,904A,7,8,9,10,Fast,BEAT JUMP (REV2)
+PAD3_PadFx2,PAD3.PadFx2,Pad,9052,7,8,9,10,9052,7,8,9,10,Fast,PAD FX2 Slot3 (momentary)
+PAD3_PadFx2+Shift,,Pad,905A,7,8,9,10,905A,7,8,9,10,Fast,PAD FX2 Slot3 (momentary)
+PAD3_SlicerLoop,PAD3.SlicerLoop,Pad,9062,7,8,9,10,9062,7,8,9,10,Fast,SLICER LOOP
+PAD3_SlicerLoop+Shift,,Pad,906A,7,8,9,10,906A,7,8,9,10,Fast,No function assigned here
+PAD3_VelocitySampler,PAD3.VelocitySampler.Start,Pad,9072,7,8,9,10,9072,7,8,9,10,Fast,Sample Slot3 Play
+PAD3_VelocitySampler+Velocity,PAD3.VelocitySampler.Level,Value,B032,7,8,9,10,,,,,,Fast,Sample Slot 3 Level (use Pad velocity)
+PAD3_VelocitySampler+Shift,PAD3.VelocitySampler.Stop,Pad,907A,7,8,9,10,907A,7,8,9,10,Fast,Sample Slot 3 stop
 ,,,,,,,,,,,,,,
-JogSearch,JogSearch,Difference,B00A,4,5,,,,,,,,RO,Search
-JogTouch,JogTouch,JogTouch,9008,1,2,,,,,,,,RO,Touch
-JogTouch,JogTouch+Shift,JogTouch,9008,4,5,,,,,,,,RO,Touch
+PAD4_HotCue,PAD4.HotCue.Call,Pad,9003,7,8,9,10,9003,7,8,9,10,Fast,HOT CUE 4
+PAD4_HotCue+Shift,PAD4.HotCue.Delete,Pad,900B,7,8,9,10,900B,7,8,9,10,Fast,Delete HOT CUE 4
+PAD4_PadFx1,PAD4.PadFx1,Pad,9013,7,8,9,10,9013,7,8,9,10,Fast,PAD FX1 Slot4 (momentary)
+PAD4_PadFx1+Shift,,Pad,901B,7,8,9,10,901B,7,8,9,10,Fast,PAD FX1 Slot4 (momentary)
+PAD4_Slicer,PAD4.Slicer,Pad,9023,7,8,9,10,9023,7,8,9,10,Fast,SLICER 4 Play
+PAD4_Slicer+Shift,,Pad,902B,7,8,9,10,902B,7,8,9,10,Fast,No function assigned here
+PAD4_Sampler,PAD4.Sampler.Start,Pad,9033,7,8,9,10,9033,7,8,9,10,Fast,Sample Slot 4 play
+PAD4_Sampler+Shift,PAD4.Sampler.Stop,Pad,903B,7,8,9,10,903B,7,8,9,10,Fast,Sample Slot 4 stop
+PAD4_BeatJump,PAD4.BeatJump,Pad,9043,7,8,9,10,9043,7,8,9,10,Fast,BEAT JUMP (FWD2)
+PAD4_BeatJump+Shift,,Pad,904B,7,8,9,10,904B,7,8,9,10,Fast,BEAT JUMP (FWD2)
+PAD4_PadFx2,PAD4.PadFx2,Pad,9053,7,8,9,10,9053,7,8,9,10,Fast,PAD FX2 Slot4 (momentary)
+PAD4_PadFx2+Shift,,Pad,905B,7,8,9,10,905B,7,8,9,10,Fast,PAD FX2 Slot4 (momentary)
+PAD4_SlicerLoop,PAD4.SlicerLoop,Pad,9063,7,8,9,10,9063,7,8,9,10,Fast,SLICER LOOP
+PAD4_SlicerLoop+Shift,,Pad,906B,7,8,9,10,906B,7,8,9,10,Fast,No function assigned here
+PAD4_VelocitySampler,PAD4.VelocitySampler.Start,Pad,9073,7,8,9,10,9073,7,8,9,10,Fast,Sample Slot4 Play
+PAD4_VelocitySampler+Velocity,PAD4.VelocitySampler.Level,Value,B033,7,8,9,10,,,,,,Fast,Sample Slot 4 Level (use Pad velocity)
+PAD4_VelocitySampler+Shift,PAD4.VelocitySampler.Stop,Pad,907B,7,8,9,10,907B,7,8,9,10,Fast,Sample Slot 4 stop
 ,,,,,,,,,,,,,,
-WheelPitchBend,WheelPitchBend,JogRotate,B009,1,2,,,,,,,,RO,Pitch Bend
-WheelSearch,WheelSearch,JogRotate,B009,4,5,,,,,,,,RO,Pitch Bend
+PAD5_HotCue,PAD5.HotCue.Call,Pad,9004,7,8,9,10,9004,7,8,9,10,Fast,HOT CUE 5
+PAD5_HotCue+Shift,PAD5.HotCue.Delete,Pad,900C,7,8,9,10,900C,7,8,9,10,Fast,Delete HOT CUE 5
+PAD5_PadFx1,PAD5.PadFx1,Pad,9014,7,8,9,10,9014,7,8,9,10,Fast,PAD FX1 Slot5 (momentary)
+PAD5_PadFx1+Shift,,Pad,901C,7,8,9,10,901C,7,8,9,10,Fast,PAD FX1 Slot5 (momentary)
+PAD5_Slicer,PAD5.Slicer,Pad,9024,7,8,9,10,9024,7,8,9,10,Fast,SLICER 5 Play
+PAD5_Slicer+Shift,PAD5.Slicer.ShiftRangeLeft,Pad,902C,7,8,9,10,902C,7,8,9,10,Fast,DOMAIN MOVE (Left)
+PAD5_Sampler,PAD5.Sampler.Start,Pad,9034,7,8,9,10,9034,7,8,9,10,Fast,Sample Slot 5 play
+PAD5_Sampler+Shift,PAD5.Sampler.Stop,Pad,903C,7,8,9,10,903C,7,8,9,10,Fast,Sample Slot 5 stop
+PAD5_BeatJump,PAD5.BeatJump,Pad,9044,7,8,9,10,9044,7,8,9,10,Fast,BEAT JUMP (REV3)
+PAD5_BeatJump+Shift,,Pad,904C,7,8,9,10,904C,7,8,9,10,Fast,BEAT JUMP (REV3)
+PAD5_PadFx2,PAD5.PadFx2,Pad,9054,7,8,9,10,9054,7,8,9,10,Fast,PAD FX2 Slot5 (momentary)
+PAD5_PadFx2+Shift,,Pad,905C,7,8,9,10,905C,7,8,9,10,Fast,PAD FX2 Slot5 (momentary)
+PAD5_SlicerLoop,PAD5.SlicerLoop,Pad,9064,7,8,9,10,9064,7,8,9,10,Fast,SLICER LOOP
+PAD5_SlicerLoop+Shift,,Pad,906C,7,8,9,10,906C,7,8,9,10,Fast,No function assigned here
+PAD5_VelocitySampler,PAD5.VelocitySampler.Start,Pad,9074,7,8,9,10,9074,7,8,9,10,Fast,Sample Slot5 Play
+PAD5_VelocitySampler+Velocity,PAD5.VelocitySampler.Level,Value,B034,7,8,9,10,,,,,,Fast,Sample Slot 5 Level (use Pad velocity)
+PAD5_VelocitySampler+Shift,PAD5.VelocitySampler.Stop,Pad,907C,7,8,9,10,907C,7,8,9,10,Fast,Sample Slot 5 stop
 ,,,,,,,,,,,,,,
-TempoSlider,TempoSlider,KnobSlider,B070,1,2,,,,,,,,Fast,Tempo Control
-TempoSlider,TempoSlider+Shift,KnobSlider,B070,4,5,,,,,,,,Fast,Tempo Control
+PAD6_HotCue,PAD6.HotCue.Call,Pad,9005,7,8,9,10,9005,7,8,9,10,Fast,HOT CUE 6
+PAD6_HotCue+Shift,PAD6.HotCue.Delete,Pad,900D,7,8,9,10,900D,7,8,9,10,Fast,Delete HOT CUE 6
+PAD6_PadFx1,PAD6.PadFx1,Pad,9015,7,8,9,10,9015,7,8,9,10,Fast,PAD FX1 Slot6 (momentary)
+PAD6_PadFx1+Shift,,Pad,901D,7,8,9,10,901D,7,8,9,10,Fast,PAD FX1 Slot6 (momentary)
+PAD6_Slicer,PAD6.Slicer,Pad,9025,7,8,9,10,9025,7,8,9,10,Fast,SLICER 6 Play
+PAD6_Slicer+Shift,PAD5.Slicer.ShiftRangeRight,Pad,902D,7,8,9,10,902D,7,8,9,10,Fast,DOMAIN MOVE (Right)
+PAD6_Sampler,PAD6.Sampler.Start,Pad,9035,7,8,9,10,9035,7,8,9,10,Fast,Sample Slot 6 play
+PAD6_Sampler+Shift,PAD6.Sampler.Stop,Pad,903D,7,8,9,10,903D,7,8,9,10,Fast,Sample Slot 6 stop
+PAD6_BeatJump,PAD6.BeatJump,Pad,9045,7,8,9,10,9045,7,8,9,10,Fast,BEAT JUMP (FWD3)
+PAD6_BeatJump+Shift,,Pad,904D,7,8,9,10,904D,7,8,9,10,Fast,BEAT JUMP (FWD3)
+PAD6_PadFx2,PAD6.PadFx2,Pad,9055,7,8,9,10,9055,7,8,9,10,Fast,PAD FX2 Slot6 (momentary)
+PAD6_PadFx2+Shift,,Pad,905D,7,8,9,10,905D,7,8,9,10,Fast,PAD FX2 Slot6 (momentary)
+PAD6_SlicerLoop,PAD6.SlicerLoop,Pad,9065,7,8,9,10,9065,7,8,9,10,Fast,SLICER LOOP
+PAD6_SlicerLoop+Shift,,Pad,906D,7,8,9,10,906D,7,8,9,10,Fast,No function assigned here
+PAD6_VelocitySampler,PAD6.VelocitySampler.Start,Pad,9075,7,8,9,10,9075,7,8,9,10,Fast,Sample Slot6 Play
+PAD6_VelocitySampler+Velocity,PAD6.VelocitySampler.Level,Value,B035,7,8,9,10,,,,,,Fast,Sample Slot 6 Level (use Pad velocity)
+PAD6_VelocitySampler+Shift,PAD6.VelocitySampler.Stop,Pad,907D,7,8,9,10,907D,7,8,9,10,Fast,Sample Slot 6 stop
+,,,,,,,,,,,,,,
+PAD7_HotCue,PAD7.HotCue.Call,Pad,9006,7,8,9,10,9006,7,8,9,10,Fast,HOT CUE 7
+PAD7_HotCue+Shift,PAD7.HotCue.Delete,Pad,900E,7,8,9,10,900E,7,8,9,10,Fast,Delete HOT CUE 7
+PAD7_PadFx1,PAD7.PadFx1,Pad,9016,7,8,9,10,9016,7,8,9,10,Fast,PAD FX1 Slot7 (momentary)
+PAD7_PadFx1+Shift,,Pad,901E,7,8,9,10,901E,7,8,9,10,Fast,PAD FX1 Slot7 (momentary)
+PAD7_Slicer,PAD7.Slicer,Pad,9026,7,8,9,10,9026,7,8,9,10,Fast,SLICER 7 Play
+PAD7_Slicer+Shift,,Pad,902E,7,8,9,10,902E,7,8,9,10,Fast,No function assigned here
+PAD7_Sampler,PAD7.Sampler.Start,Pad,9036,7,8,9,10,9036,7,8,9,10,Fast,Sample Slot 7 play
+PAD7_Sampler+Shift,PAD7.Sampler.Stop,Pad,903E,7,8,9,10,903E,7,8,9,10,Fast,Sample Slot 7 stop
+PAD7_BeatJump,PAD7.BeatJump,Pad,9046,7,8,9,10,9046,7,8,9,10,Fast,BEAT JUMP (REV4)
+PAD7_BeatJump+Shift,,Pad,904E,7,8,9,10,904E,7,8,9,10,Fast,BEAT JUMP (REV4)
+PAD7_PadFx2,PAD7.PadFx2,Pad,9056,7,8,9,10,9056,7,8,9,10,Fast,PAD FX2 Slot7 (momentary)
+PAD7_PadFx2+Shift,,Pad,905E,7,8,9,10,905E,7,8,9,10,Fast,PAD FX2 Slot7 (momentary)
+PAD7_SlicerLoop,PAD7.SlicerLoop,Pad,9066,7,8,9,10,9066,7,8,9,10,Fast,SLICER LOOP
+PAD7_SlicerLoop+Shift,,Pad,906E,7,8,9,10,906E,7,8,9,10,Fast,No function assigned here
+PAD7_VelocitySampler,PAD7.VelocitySampler.Start,Pad,9076,7,8,9,10,9076,7,8,9,10,Fast,Sample Slot7 Play
+PAD7_VelocitySampler+Velocity,PAD7.VelocitySampler.Level,Value,B036,7,8,9,10,,,,,,Fast,Sample Slot 7 Level (use Pad velocity)
+PAD7_VelocitySampler+Shift,PAD7.VelocitySampler.Stop,Pad,907E,7,8,9,10,907E,7,8,9,10,Fast,Sample Slot 7 stop
+,,,,,,,,,,,,,,
+PAD8_HotCue,PAD8.HotCue.Call,Pad,9007,7,8,9,10,9007,7,8,9,10,Fast,HOT CUE 8
+PAD8_HotCue+Shift,PAD8.HotCue.Delete,Pad,900F,7,8,9,10,900F,7,8,9,10,Fast,Delete HOT CUE 8
+PAD8_PadFx1,PAD8.PadFx1,Pad,9017,7,8,9,10,9017,7,8,9,10,Fast,PAD FX1 Slot8 (momentary)
+PAD8_PadFx1+Shift,,Pad,901F,7,8,9,10,901F,7,8,9,10,Fast,PAD FX1 Slot8 (momentary)
+PAD8_Slicer,PAD8.Slicer,Pad,9027,7,8,9,10,9027,7,8,9,10,Fast,SLICER 8 Play
+PAD8_Slicer+Shift,,Pad,902F,7,8,9,10,902F,7,8,9,10,Fast,No function assigned here
+PAD8_Sampler,PAD8.Sampler.Start,Pad,9037,7,8,9,10,9037,7,8,9,10,Fast,Sample Slot 8 play
+PAD8_Sampler+Shift,PAD8.Sampler.Stop,Pad,903F,7,8,9,10,903F,7,8,9,10,Fast,Sample Slot 8 stop
+PAD8_BeatJump,PAD8.BeatJump,Pad,9047,7,8,9,10,9047,7,8,9,10,Fast,BEAT JUMP (FWD4)
+PAD8_BeatJump+Shift,,Pad,904F,7,8,9,10,904F,7,8,9,10,Fast,BEAT JUMP (FWD4)
+PAD8_PadFx2,PAD8.PadFx2,Pad,9057,7,8,9,10,9057,7,8,9,10,Fast,PAD FX2 Slot8 (momentary)
+PAD8_PadFx2+Shift,,Pad,905F,7,8,9,10,905F,7,8,9,10,Fast,PAD FX2 Slot8 (momentary)
+PAD8_SlicerLoop,PAD8.SlicerLoop,Pad,9067,7,8,9,10,9067,7,8,9,10,Fast,SLICER LOOP
+PAD8_SlicerLoop+Shift,,Pad,906F,7,8,9,10,906F,7,8,9,10,Fast,No function assigned here
+PAD8_VelocitySampler,PAD8.VelocitySampler.Start,Pad,9077,7,8,9,10,9077,7,8,9,10,Fast,Sample Slot8 Play
+PAD8_VelocitySampler+Velocity,PAD8.VelocitySampler.Level,Value,B037,7,8,9,10,,,,,,Fast,Sample Slot 8 Level (use Pad velocity)
+PAD8_VelocitySampler+Shift,PAD8.VelocitySampler.Stop,Pad,907F,7,8,9,10,907F,7,8,9,10,Fast,Sample Slot 8 stop
+,,,,,,,,,,,,,,
+HotCue,HotCueMode,Button,901B,0,1,2,3,901B,0,1,2,3,Fast,HOT CUE Mode On/Off
+BeatJump,HotCue+Shift,Button,9069,0,1,2,3,9069,0,1,2,3,Fast,BEAT JUMP Mode On/Off
+PadFx1,PadFx1Mode,Button,901E,0,1,2,3,901E,0,1,2,3,Fast,PAD FX1 Mode On/Off
+PadFx2,PadFx1+Shift,Button,906B,0,1,2,3,906B,0,1,2,3,Fast,PAD FX2 Mode On/Off
+Slicer,SlicerMode,Button,9020,0,1,2,3,9020,0,1,2,3,Fast,SLICER Mode On/Off
+SlicerLoop,Slicer+Shift,Button,906D,0,1,2,3,906D,0,1,2,3,Fast,SLICER LOOP Mode On/Off
+Sampler,SamplerMode,Button,9022,0,1,2,3,9022,0,1,2,3,Fast,SAMPLER Mode On/Off
+#Sampler,SamplerMode,Button,9023,0,1,2,3,9023,0,1,2,3,Fast,SAMPLER Mode On/Off
+VelocitySampler,Sampler+LongPress,Button,9041,0,1,2,3,9041,0,1,2,3,Fast,Velocity Mode On/Off
+,,,,,,,,,,,,,,
+Parameter1Left_HotCue,,Button,9024,0,1,2,3,9024,0,1,2,3,,Call Memory Cue (<)
+Parameter2Left_HotCue,Parameter1Left_HotCue+Shift,Button,9001,0,1,2,3,9001,0,1,2,3,,No function assigned here
+Parameter1Left_PadFx1,Parameter1Left.PadFx1,Button,9025,0,1,2,3,9025,0,1,2,3,,Adjust Beat (down)
+Parameter2Left_PadFx1,Parameter1Left_PadFx1+Shift,Button,9002,0,1,2,3,9002,0,1,2,3,,No function assigned here
+Parameter1Left_Slicer,Parameter1Left.Slicer,Button,9026,0,1,2,3,9026,0,1,2,3,,Change Roll (down)
+Parameter2Left_Slicer,Parameter2Left.Slicer,Button,9003,0,1,2,3,9003,0,1,2,3,,Change Domain (down)
+Parameter1Left_Sampler,Parameter1Left.Sampler.BankDown,Button,9027,0,1,2,3,9027,0,1,2,3,,Change Bank (down)
+Parameter2Left_Sampler,Parameter1Left_Sampler+Shift,Button,9004,0,1,2,3,9004,0,1,2,3,,No function assigned here
+Parameter1Left_BeatJump,Parameter1Left.BeatJump,Button,9028,0,1,2,3,9028,0,1,2,3,,Change Jump Range (1/2x)
+Parameter2Left_BeatJump,Parameter1Left_BeatJump+Shift,Button,9005,0,1,2,3,9005,0,1,2,3,,Change Jump Range (1/16x)
+Parameter1Left_PadFx2,Parameter1Left.PadFx2,Button,9029,0,1,2,3,9029,0,1,2,3,,Adjust Beat (down)
+Parameter2Left_PadFx2,Parameter1Left_PadFx2+Shift,Button,9006,0,1,2,3,9006,0,1,2,3,,No function assigned here
+Parameter1Left_SlicerLoop,Parameter1Left.SlicerLoop,Button,902A,0,1,2,3,902A,0,1,2,3,,Change Roll (down)
+Parameter2Left_SlicerLoop,Parameter2Left.SlicerLoop,Button,9007,0,1,2,3,9007,0,1,2,3,,Change Domain (down)
+Parameter1Left_VelocitySampler,Parameter1Left.VelocitySampler.BankDown,Button,902B,0,1,2,3,902B,0,1,2,3,,Change Bank (down)
+Parameter2Left_VelocitySampler,Parameter1Left_VelocitySampler+Shift,Button,9008,0,1,2,3,9008,0,1,2,3,,No function assigned here
+,,,,,,,,,,,,,,
+Parameter1Right_HotCue,,Button,902C,0,1,2,3,902C,0,1,2,3,,Call Memory Cue (>)
+Parameter2Right_HotCue,Parameter1Right_HotCue+Shift,Button,9009,0,1,2,3,9009,0,1,2,3,,No function assigned here
+Parameter1Right_PadFx1,Parameter1Right.PadFx1,Button,902D,0,1,2,3,902D,0,1,2,3,,Adjust Beat (up)
+Parameter2Right_PadFx1,Parameter1Right_PadFx1+Shift,Button,907A,0,1,2,3,907A,0,1,2,3,,No function assigned here
+Parameter1Right_Slicer,Parameter1Right.Slicer,Button,902E,0,1,2,3,902E,0,1,2,3,,Change Roll (up)
+Parameter2Right_Slicer,Parameter2Right.Slicer,Button,907B,0,1,2,3,907B,0,1,2,3,,Change Domain (up)
+Parameter1Right_Sampler,Parameter1Right.Sampler.BankUp,Button,902F,0,1,2,3,902F,0,1,2,3,,Change Bank (up)
+Parameter2Right_Sampler,Parameter1Right_Sampler+Shift,Button,907C,0,1,2,3,907C,0,1,2,3,,No function assigned here
+Parameter1Right_BeatJump,Parameter1Right.BeatJump,Button,9030,0,1,2,3,9030,0,1,2,3,,Change Jump Range (2x)
+Parameter2Right_BeatJump,Parameter1Right_BeatJump+Shift,Button,907D,0,1,2,3,907D,0,1,2,3,,Change Jump Range (16x)
+Parameter1Right_PadFx2,Parameter1Right.PadFx2,Button,9031,0,1,2,3,9031,0,1,2,3,,Adjust Beat (up)
+Parameter2Right_PadFx2,Parameter1Right_PadFx2+Shift,Button,907E,0,1,2,3,907E,0,1,2,3,,No function assigned here
+Parameter1Right_SlicerLoop,Parameter1Right.SlicerLoop,Button,9032,0,1,2,3,9032,0,1,2,3,,Change Roll (up)
+Parameter2Right_SlicerLoop,Parameter1Right_SlicerLoop+Shift,Button,907F,0,1,2,3,907F,0,1,2,3,,Change Domain (up)
+Parameter1Right_VelocitySampler,Parameter1Right.VelocitySampler.BankUp,Button,9033,0,1,2,3,9033,0,1,2,3,,Change Bank (up)
+Parameter2Right_VelocitySampler,Parameter1Right_VelocitySampler+Shift,Button,9000,0,1,2,3,9000,0,1,2,3,,No function assigned here
+,,,,,,,,,,,,,,
+SamplerVolume,SamplerVolume,KnobSliderHiRes,B603,,,,,,,,,,,Sampler Volume
+SamplerVolume,SamplerVolume+Shift,KnobSlider,B669,,,,,,,,,,,Sampler Volume
+,,,,,,,,,,,,,,
+# Others,,,,,,,,,,,,,,
+FxPanel,FxPanel,Button,9678,,,,,,,,,,,Display FX panel (Type1-3) -> OFF -> ...(cyclic)
+SamplerPanel,FxPanel+Shift,Button,9679,,,,,,,,,,,Display SAMPLER panel (Type1-3) -> OFF -> ...(cyclic)
+,,,,,,,,,,,,,,
+# State,,,,,,,,,,,,,,
+DeckState,DeckState,Button,903C,0,1,2,3,,,,,,RO,LED State of the DECK 1/2/3/4
+DualDeckState13,DualDeckState13,Button,967A,,,,,,,,,,RO,LED State of the DUAL DECK button (Deck1 and Deck3)
+DualDeckState24,DualDeckState24,Button,967B,,,,,,,,,,RO,LED State of the DUAL DECK button (Deck2 and Deck4)
+VinylState,VinylState,Button,903A,0,1,2,3,,,,,,RO,LED State of the Vinyl buttons
+#,SlipState,Button,903B,0,1,2,3,,,,,,RO,LED State of the SLIP buttons
+SlipStateForFlashing,SlipStateForFlashing,Indicator,,,,,,903E,0,1,2,3,RO,SLIP on/off state for SLIP Mode Flashing
+#,PlayPauseStateForNeedle,Indicator,,,,,,900F,0,1,2,3,RO,Play/Pause state for Needle Search Lock
+,,,,,,,,,,,,,,
+# illumination,,,,,,,,,,,,,,
+LoadedIndicator,LoadedIndicator,Indicator,,,,,,,9B00,9B01,9B02,9B03,RO;Priority=100,Trigger for Load illumination
+JogPlayPauseIndicatorShort,JogPlayPauseIndicatorShort,JogIndicator,,,,,,,BB00,BB01,BB02,BB03,RO;Min=1;Max=72;Priority=100,Playing States for the trigger for JOG illumination
+EndWarningIndicator,EndWarningIndicator,Indicator,,,,,,,9B04,9B05,9B06,9B07,RO;Priority=100,Trigger for ending illumination of playback
+,,,,,,,,,,,,,,
+# Parameter,,,,,,,,,,,,,,
+JogIndicatorInterval,JogIndicatorInterval,Parameter,FFF1,,,,,,,,,,Value=12,
+JogRatency,JogRatency,Parameter,FFF2,,,,,,,,,,Value=4,unused
+MidiOutInterval,MidiOutInterval,Parameter,FFF3,,,,,,,,,,Value=2,

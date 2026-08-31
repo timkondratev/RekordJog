@@ -10,6 +10,8 @@ This program allows jog wheels and pitch control on third-party controllers to w
     -   Mix
 - Numark
     -   Mixtrack 3
+- Native Instruments
+    -   Traktor Kontrol S2 MK3 (work in progress — see notes below)
 
 To use it with other controllers, you'll need to find the MIDI calls and their pattern using MIDI-OX or a similar tool and modify the source code accordingly. Feel free to send a Pull Request!
 
@@ -32,7 +34,7 @@ pip3 install -r requirements.txt
 ```
 5. Copy and replace the DDJ-SX Mapping in Rekordbox' installation folder with the files found in "pioneer_mappings"
 ```bash
-MACOSPATH_HERE
+cp "pioneer_mappings/PIONEER DDJ-SX.midi.csv" "/Applications/rekordbox 7/rekordbox.app/Contents/Resources/MidiMappings/PIONEER DDJ-SX.midi.csv"
 ```
 
 ## Installation Windows
@@ -78,6 +80,19 @@ You need to go to "MIDI" and change the Setting for PIONEER DDJ-SX Tempo from 0h
 ### Allen & Heath Xone:4D
 
 For better precision, 2 faders are used for each deck pitch control. 2-nd fader increments smaller values.
+
+### Native Instruments Traktor Kontrol S2 MK3 (work in progress)
+
+To put the S2 MK3 into MIDI mode: hold the **LEFT FLX button** while connecting the USB cable. The pads flash green once MIDI mode is active.
+
+Launch with:
+```bash
+python3 RekordJog_KontrolS2MK3.py
+```
+
+Supported: jogwheels (rotation + touch), tempo faders, deck buttons + shift layer, performance pads (incl. shift), browse encoder, loop/move encoders (incl. shift → BeatJump), mixer faders/EQ/gain, crossfader, headphone cue, FX select + FX/filter knob, load button.
+
+**Known limitation:** the browse encoder's press action (`BROWSE_PRESS_NOTE`) is not yet mapped — the exact MIDI note it sends hasn't been identified. It's disabled (`None`) rather than guessed. Everything else has been tested on real hardware. Helper scripts used to reverse-engineer the mapping (`capture_s2mk3_midi.py`, `learn_buttons.py`, `test_midi_input.py`) are included for anyone continuing this work.
 
 ## For Developers:
 ### How to map jog wheels
