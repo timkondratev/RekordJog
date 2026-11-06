@@ -1,2 +1,4 @@
 mido
+# python-rtmidi ships Windows wheels only up to Python 3.12 (latest release 1.5.8, 2023).
+# On Windows, use Python 3.12; on 3.13+ see the README troubleshooting section.
 python-rtmidi
